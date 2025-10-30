@@ -18,6 +18,9 @@ interface FilterState {
   searchTerm: string;
 }
 
+const API_URL = "";
+
+
 const Post = () => {
   const navigate = useNavigate();
   const { data: allPosts = [] } = usePosts();
@@ -46,7 +49,7 @@ const Post = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const { data } = await axios.get(`/api/client/category/select/all`);
+        const { data } = await axios.get(`${API_URL}/api/client/category/select/all`);
         setCategories(data);
       } catch (error) {
         console.error('카테고리 데이터 가져오기 실패:', error);
@@ -59,7 +62,7 @@ const Post = () => {
   useEffect(() => {
     const fetchTempPosts = async () => {
       try {
-        const { data } = await axios.get(`/api/admin/post/select/tempList`);
+        const { data } = await axios.get(`${API_URL}/api/admin/post/select/tempList`);
 
         setTempPosts(data);
       } catch (error) {
@@ -292,6 +295,8 @@ const Post = () => {
         }
       });
     }
+    // 최신순 정렬 (regDate 내림차순)
+    filtered = filtered.sort((a, b) => new Date(b.regDate).getTime() - new Date(a.regDate).getTime());
     setFilteredPosts(filtered);
     setHasSearched(true);
     setSelectedPosts([]);
@@ -351,7 +356,7 @@ const Post = () => {
     try {
       // 선택된 게시물들을 하나씩 삭제
       const deletePromises = selectedPosts.map(async (postId) => {
-        const {data} = await axios.delete(`/api/admin/post/delete/${postId}`); // 여기 확인할 것  
+        const {data} = await axios.delete(`${API_URL}/api/admin/post/delete/${postId}`); // 여기 확인할 것  
       });
 
       // 모든 삭제 요청이 완료될 때까지 대기
@@ -447,11 +452,15 @@ const Post = () => {
                 <FilterLabel>글 상태</FilterLabel>
                 <CustomSelectWrapper data-dropdown>
                   <CustomSelectButton 
-                    onClick={() => setIsPostStatusOpen(!isPostStatusOpen)}
+                    onClick={() => {
+                      setIsPostStatusOpen(prev => !prev);
+                      setIsCategoryOpen(false);
+                      setIsSearchTypeOpen(false);
+                    }}
                     $isOpen={isPostStatusOpen}
                   >
                     <span>{filters.postStatus}</span>
-                    <ArrowIcon src={isSearchTypeOpen ? "/admin/img/icon_arrowUp.png" : "/admin/img/icon_arrowDown.png"} $isOpen={isPostStatusOpen}/>
+                    <ArrowIcon src={isPostStatusOpen ? "/admin/img/icon_arrowUp.png" : "/admin/img/icon_arrowDown.png"} $isOpen={isPostStatusOpen}/>
                   </CustomSelectButton>
                   {isPostStatusOpen && (
                     <CustomDropdown>
@@ -482,11 +491,15 @@ const Post = () => {
                 <FilterLabel>카테고리</FilterLabel>
                 <CustomSelectWrapper data-dropdown>
                   <CustomSelectButton 
-                    onClick={() => setIsCategoryOpen(!isCategoryOpen)}
+                    onClick={() => {
+                      setIsCategoryOpen(prev => !prev);
+                      setIsPostStatusOpen(false);
+                      setIsSearchTypeOpen(false);
+                    }}
                     $isOpen={isCategoryOpen}
                   >
                     <span>{filters.category}</span>
-                    <ArrowIcon src={isSearchTypeOpen ? "/admin/img/icon_arrowUp.png" : "/admin/img/icon_arrowDown.png"} $isOpen={isCategoryOpen}/>
+                    <ArrowIcon src={isCategoryOpen ? "/admin/img/icon_arrowUp.png" : "/admin/img/icon_arrowDown.png"} $isOpen={isCategoryOpen}/>
                   </CustomSelectButton>
                   {isCategoryOpen && (
                     <CustomDropdown>
@@ -514,11 +527,15 @@ const Post = () => {
                 <FilterLabel>검색</FilterLabel>
                 <CustomSelectWrapper data-dropdown>
                   <CustomSelectButton 
-                    onClick={() => setIsSearchTypeOpen(!isSearchTypeOpen)}
+                    onClick={() => {
+                      setIsSearchTypeOpen(prev => !prev);
+                      setIsPostStatusOpen(false);
+                      setIsCategoryOpen(false);
+                    }}
                     $isOpen={isSearchTypeOpen}
                   >
                     <span>{filters.searchType}</span>
-                    <ArrowIcon src={isSearchTypeOpen ? "/admin/img/icon_arrowUp.png" : "/admin/img/icon_arrowDown.png"}  $isOpen={isSearchTypeOpen}/>
+                    <ArrowIcon src={isSearchTypeOpen ? "/admin/img/icon_arrowUp.png" : "/admin/img/icon_arrowDown.png"} $isOpen={isSearchTypeOpen}/>
                   </CustomSelectButton>
                   {isSearchTypeOpen && (
                     <CustomDropdown>
@@ -640,7 +657,7 @@ const Post = () => {
                         <TableCell width="160px">
                           <Badge 
                             $isTemp={post.content.state.state_id===2}
-                            src={post.content.state.state_id === 2 ? "/img/badge_temp.png" : "/img/badge_active.png"} 
+                            src={post.content.state.state_id === 2 ? "/admin/img/badge_temp.png" : "/admin/img/badge_active.png"} 
                             alt={post.content.state.name}
                           />
                         </TableCell>

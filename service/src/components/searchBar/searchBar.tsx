@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components"
 
 
@@ -7,9 +7,11 @@ interface SearchBarProps {
   placeholder:string;
 }
 const SearchBar = ({placeholder}:SearchBarProps) => {
-
-  const [value,setValue] = useState("")
+  
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  const [value,setValue] = useState("")
 
   const onChange = (e:React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value)
@@ -20,6 +22,9 @@ const SearchBar = ({placeholder}:SearchBarProps) => {
     if (!value.trim()) return;
     navigate(`/search?keyword=${encodeURIComponent(value.trim())}`);  }
 
+    useEffect(() => {
+      setValue("");
+    }, [location.pathname, location.search]);
 
   return(
     <Container onSubmit ={onSubmit}>

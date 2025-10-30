@@ -22,7 +22,6 @@ const PostNavigation = ({postDirection,imgSrc,title,createdDate,author,postId}:P
           <span>{createdDate}</span>
           <span>|</span>
           <span>{author}</span>
-          <span>|</span>
         </Info>
       </Container>
     </StyledLink>

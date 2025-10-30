@@ -194,7 +194,7 @@ const Dashboard = () => {
             ))}
 
             {getBestBlogs().length === 0 && (
-            <div style={{height:"305px", width:"100%",border: `1px solid ${colors.LightGray[300]}`, borderRadius:"4px"}}>
+            <div style={{height:"305px", width:"100%"}}>
             </div>)}
 
 

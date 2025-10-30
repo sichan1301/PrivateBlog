@@ -40,10 +40,18 @@ const Root = () => {
   
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+  
+      const isTypingElement =
+        target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable;
+  
+      if (isTypingElement) return; 
+  
       if (e.key === ']' || e.code === 'BracketRight') {
         setIsSidebarOpen((prev: boolean) => !prev);
       }
     };
+  
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);

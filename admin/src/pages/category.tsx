@@ -46,7 +46,7 @@ const Category = () => {
   const [leftPanelHeight, setLeftPanelHeight] = useState<number>(336);
   const leftPanelRef = useRef<HTMLDivElement>(null); 
 
-  const API_URL = "http://ifut2.ddns.net";
+  const API_URL = "";
 
   const updateLeftPanelHeight = () => {
     if (leftPanelRef.current) {

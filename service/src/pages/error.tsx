@@ -2,6 +2,11 @@ import styled from "styled-components"
 import Header from "../components/header/header"
 
 const Error = () => {
+
+  const handleRefresh = () => {
+    window.location.reload(); // 전체 페이지 새로고침
+  };
+
   return(
     <>
       <Header />
@@ -9,11 +14,11 @@ const Error = () => {
         <Main>
           <ErrorLogo src="/img/errorLogo.png" />
           <Text>서버 에러가 발생했습니다. <br /> 나중에 다시 시도해 주세요.</Text>
-          <RefreshBtn>새로고침</RefreshBtn>
+          <RefreshBtn onClick={handleRefresh}>새로고침</RefreshBtn>
         </Main>
       </Container>
     </>
-  )
+  )                             
 }
 
 

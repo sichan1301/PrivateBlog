@@ -18,6 +18,18 @@ const Search = () => {
 
   const {currentPage,totalPages,currentPosts,goToPage} = usePagination(filteredData, 10);
 
+
+  const getThumbnailNumber = (postId: string) => {
+    let hash = 0;
+    for (let i = 0; i < postId.length; i++) {
+      const char = postId.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // 32bit 정수로 변환
+    }
+    return Math.abs(hash) % 7 + 1; // 1~7 사이의 값
+  };
+
+
   useEffect(() => {
     if (!searchKeyword) {
       setFilteredData(data);
@@ -44,21 +56,30 @@ const Search = () => {
 
         {filteredData.length ?
           <BlogList>
-            {currentPosts.map((post:PostType) => 
-              <Link to ={`/detail/${post.post_id}`}>
-                <Blog 
-                  key={post.post_id} 
-                  category={post.category.name}
-                  title = {post.title}
-                  desc = {post.content.content }
-                  createdDate = {post.regDate}
-                  author = {post.reg_user}
-                  viewer = {post.postView?.view}
-                  imgSrc = {post.thumbnail}
-                  textWrapperWith={990}
-                  searchKeyword={searchKeyword}
-                />
-              </Link>)}
+            {currentPosts.map((post: PostType) => {
+              // ✅ 썸네일이 없을 때만 썸네일 번호 생성
+              const thumbnailNumber = !post.thumbnail ? getThumbnailNumber(post.post_id) : undefined;
+
+              return (
+                <Link
+                  key={post.post_id}
+                  to={`/detail/${post.post_id}${thumbnailNumber ? `?thumbnail=${thumbnailNumber}` : ""}`}
+                >
+                  <Blog
+                    category={post.category.name}
+                    title={post.title}
+                    desc={post.content.content}
+                    createdDate={post.regDate}
+                    author={post.reg_user}
+                    viewer={post.postView?.view}
+                    imgSrc={post.thumbnail}
+                    textWrapperWith={990}
+                    searchKeyword={searchKeyword}
+                    thumbnailNumber={thumbnailNumber} 
+                  />
+                </Link>
+              );
+            })}
           </BlogList>:
           <NoDataContainer>
             <BlogNotExist>검색 결과가 존재하지 않습니다.</BlogNotExist>
@@ -101,9 +122,15 @@ const SearchResult = styled.div`
   line-height: 1.36;
   letter-spacing: -0.024em;
   color:#767676;
-  span{
-    color:#9747FF;
+
+  span {
+    color: #9747FF;
+    word-break: break-all; /* ✅ 길면 강제로 줄바꿈 */
+    overflow-wrap: anywhere; /* ✅ 브라우저 호환성 더 좋게 */
+    max-width: 80%; /* ✅ 너무 길면 화면 너비 제한 */
+    display: inline-block;
   }
+
 `
 
 const BlogCount = styled.div`

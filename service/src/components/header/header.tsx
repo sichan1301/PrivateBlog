@@ -1,17 +1,28 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import SearchBar from "../searchBar/searchBar";
 import { MainArea } from "../../common/style";
 
 const Header = () => {
+  const navigate = useNavigate();
+
+  const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+
+    if (location.pathname === "/") {
+      window.location.reload();
+    } else {
+      navigate("/");
+    }
+  };
 
   return (
     <Container>
       <Main>
 
-        <Link to ="/">
-          <Logo src="/img/mainLogo.png"/>
-        </Link>
+      <LogoLink href="/" onClick={handleLogoClick}>
+        <Logo src="/img/mainLogo.png" alt="main logo" />
+      </LogoLink>
 
         <SearchBar 
           placeholder ="검색어를 입력하세요." 
@@ -42,6 +53,11 @@ const Logo = styled.img`
   height: 34px;
   cursor: pointer;
 `
+
+const LogoLink = styled.a`
+  display: flex;
+  align-items: center;
+`;
 
 
 export default Header;
